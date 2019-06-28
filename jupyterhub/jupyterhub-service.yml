@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: jupyterhub-service
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: jhub
+  selector:
+    component: jupyterhub
+  type: ClusterIP

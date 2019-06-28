@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jupyterhub
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: jupyterhub
+      labels:
+        app: jupyterhub
+        name: jupyterhub
+        component: jupyterhub
+    spec:
+      affinity:
+      hostname: jupyterhub
+      containers:
+      - name: jupyterhub
+        image: your-registry/jupyterhub:latest
+        env:
+        - name: JUPYTER_ADM_PWD
+          valueFrom:
+            secretKeyRef:
+              name: jupyterhub-secret
+              key: admin_pwd
+        - name: JH_CREDS
+          valueFrom:
+            secretKeyRef:
+              name: jupyterhub-secret
+              key: credentials
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 0.1
+          limits:
+            memory: 4Gi
+            cpu: 2
+        volumeMounts:
+            - mountPath: /home
+              name: jupyterhub-vol
+        ports:
+        - containerPort: 20002
+          protocol: TCP
+        - containerPort: 8000
+          protocol: TCP
+      imagePullSecrets:
+        - name: artifactory-registry-secret
+      volumes:
+        - name: jupyterhub-vol
+          persistentVolumeClaim:
+              claimName: jupyterhub-pvc

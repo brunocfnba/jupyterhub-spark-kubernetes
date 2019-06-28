@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jupyter-spark-worker
+spec:
+  replicas: 145
+  template:
+    metadata:
+      name: spark-worker-jh
+      labels:
+        app: spark-worker-jh
+        name: spark-worker-jh
+        component: spark-worker-jh
+    spec:
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: app
+      #               operator: In
+      #               values:
+      #                 - spark-worker-jh
+      #         topologyKey: kubernetes.io/hostname
+      # hostname: spark-worker-jh
+      containers:
+      - name: spark-worker-jh
+        image: your-register/spark-jupyter:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 0.1
+          limits:
+            memory: 120Gi
+            cpu: 60
+        args: ["WORKER"]
+        ports:
+        - containerPort: 4077
+          protocol: TCP
+        - containerPort: 8081
+          protocol: TCP
+      imagePullSecrets:
+        - name: artifactory-registry-secret

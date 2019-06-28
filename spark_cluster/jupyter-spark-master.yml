@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jupyter-spark-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: spark-master-jh
+      labels:
+        name: spark-master-jh
+        component: spark-master-jh
+    spec:
+      containers:
+      - name: spark-master-jh
+        image: your-register/spark-jupyter:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 0.1
+          limits:
+            memory: 8Gi
+            cpu: 4
+        args: ["MASTER"]
+        ports:
+          - containerPort: 7077
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 4040
+            protocol: TCP
+      imagePullSecrets:
+        - name: artifactory-registry-secret
+            
